@@ -1,0 +1,11 @@
+pip install Flask
+pip install influxdb
+pip install pandas
+pip install numpy
+pip install matplotlib
+pip install scipy
+pip install statsmodels
+pip install passlib
+pip install psycopg2
+pip install Flask-HTTPAuth
+pip install itsdangerous

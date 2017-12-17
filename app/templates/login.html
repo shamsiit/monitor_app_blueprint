@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin - Bootstrap Admin Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/sb-admin.css') }}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+/**var str = "Basic "+window.btoa("admin:admin1234"); 
+console.log(str);
+ $.ajax({ type: 'GET', url: "http://localhost:8000/api/v1/user/token", headers: { "Authorization":str, "Accept": "application/json" } }).done(function(data,status,xhr) { console.log(xhr.status);
+console.log(data) });**/
+/**$.ajax({
+    type: 'GET',
+    url: 'http://localhost:8000/api/v1/user',
+     beforeSend: function (xhr){ 
+        xhr.setRequestHeader('Authorization', "Bearer eyJhbGciOiJIUzI1NiIsImV4cCI6MTUxMDczNjU5NywiaWF0IjoxNTEwNzM1OTk3fQ.eyJ1c2VyX25hbWUiOiJhZG1pbiIsInVzZXJfaWQiOjN9.QTJ__FcDTQ2kcJ9b9oGfe9GVJBIWRRwTI5sN6o"); 
+        xhr.setRequestHeader('Accept', "application/json"); 
+    },
+    success : function(data,status,xhr) {
+      //Success block 
+      console.log(xhr.status);
+   },
+   error: function (xhr,ajaxOptions,throwError){
+    //Error block 
+    console.log(xhr.status)
+    console.log(throwError);
+    
+  },
+});
+**/
+
+$( document ).ready(function() {
+    $("#btn").click(function(){
+
+        
+
+	var url = '{{ url_for('user.user_get_token')}}';
+        var url2 = '{{ url_for('main.jvm_stat')}}';
+
+	var username = $("#username").val();
+	var password = $("#password").val();
+        var str = username+":"+password;
+	var str1 = "Basic "+window.btoa(str);
+	 
+        $.ajax({
+    		type: 'GET',
+    		url: url,
+     		beforeSend: function (xhr){ 
+       		 xhr.setRequestHeader('Authorization', str1); 
+       		 xhr.setRequestHeader('Accept', "application/json");
+    		},
+    		success : function(data,status,xhr) {
+     		 //Success block 
+     		 console.log(xhr.status);
+                 console.log(data);
+                 var d = data["token"];
+                 console.log(d);
+		 $(location).attr('href', url2)
+  		 },
+   		error: function (xhr,ajaxOptions,throwError){
+    		//Error block 
+                
+                console.log("In Err");
+    		console.log(xhr.status);
+    		console.log(throwError);
+                alert("Wrong username or password");
+    
+  		},
+	});
+
+
+    });
+});
+
+
+
+
+
+
+</script>
+
+</head>
+
+<body >
+
+    <div class="container">
+
+      <form class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputUserName" class="sr-only">User Name</label>
+        <input type="text" id="username" class="form-control" placeholder="User Name" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Password" required>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="button" id="btn">Sign in</button>
+      </form>
+
+    </div>
+
+ 
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+
+
+</body>
+
+</html>

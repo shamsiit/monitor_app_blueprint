@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin - Bootstrap Admin Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/sb-admin.css') }}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/graph.css') }}" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/draw_graph_two.js') }}"></script>
+</head>
+
+<body onload=""><!--,mainGraph()-->
+
+    <div > <!--  id="wrapper"  -->
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index')}}">Admin</a>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu message-dropdown">
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-footer">
+                            <a href="#">Read All New Messages</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu alert-dropdown">
+                        <li>
+                            <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">View All</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Admin <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.jvm_stat')}}"><i class="fa fa-fw fa-gear"></i> JVM Stat</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <!--<div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li class="active">
+                        <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="charts.html"><i class="fa fa-fw fa-bar-chart-o"></i> Charts</a>
+                    </li>
+                    <li>
+                        <a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a>
+                    </li>
+                    <li>
+                        <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a>
+                    </li>
+                    <li>
+                        <a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Bootstrap Elements</a>
+                    </li>
+                    <li>
+                        <a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Bootstrap Grid</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Dropdown <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="demo" class="collapse">
+                            <li>
+                                <a href="#">Dropdown Item</a>
+                            </li>
+                            <li>
+                                <a href="#">Dropdown Item</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Blank Page</a>
+                    </li>
+                    <li>
+                        <a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> RTL Dashboard</a>
+                    </li>
+                </ul>
+            </div>-->
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            {{ host_name }} Host's <small>Statistics</small>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li class="active">
+                                <i class="fa fa-dashboard"></i> 
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+    
+
+                <div class="row">
+                    
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='cpu')}}"> {{ host_name }} host's cpu usage_user details </a>
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">  
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s cpu usage_user Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "cpu_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+                      //call('{{ item }}');
+                      draw_graph('{{ url_for('cpu.cpu_data',host_name=host_name,field_name='usage_user')}}','{{ "cpu_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+                    
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='mem')}}"> {{ host_name }} host's memory used_percent details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s memory used_percent Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "mem_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('mem.mem_data',host_name=host_name,field_name='used_percent')}}','{{ "mem_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+
+                </script>
+                    
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='net')}}"> {{ host_name }} host's net download details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s net download Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "net_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('net.net_data',host_name=host_name,field_name='bytes_recv')}}','{{ "net_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+
+                </script>
+                    
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='diskio')}}"> {{ host_name }} host's diskio write details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s diskio write Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "diskio_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('diskio.diskio_data',host_name=host_name,field_name='write_bytes')}}','{{ "diskio_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='disk')}}"> {{ host_name }} host's disk usage_percent details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s disk usage_percent Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "disk_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('disk.disk_data',host_name=host_name,field_name='used_percent')}}','{{ "disk_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='kernel')}}"> {{ host_name }} host's kernel process forked details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s kernel process forked Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "kernel_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('kernel.kernel_data',host_name=host_name,field_name='processes_forked')}}','{{ "kernel_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='netstat')}}"> {{ host_name }} host's netstat tcp established details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s netstat tcp established Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "netstat_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('netstat.netstat_data',host_name=host_name,field_name='tcp_established')}}','{{ "netstat_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='processes')}}"> {{ host_name }} host's processes total threads details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s processes total threads Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "processes_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('processes.processes_data',host_name=host_name,field_name='total_threads')}}','{{ "processes_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='swap')}}"> {{ host_name }} host's swap used percent details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s swap used percent Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "swap_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('swap.swap_data',host_name=host_name,field_name='used_percent')}}','{{ "swap_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            <a class="btn btn-primary" href="{{ url_for('main.detail_graph_by_host',host_name=host_name,measurement='system')}}"> {{ host_name }} host's system load1 details </a>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{ host_name }}'s system load1 Chart</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="{{ "system_" ~ host_name | replace(".", "")}}"></div> 
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                  //console.log({{ item }});
+                  $(document).ready(function() {
+
+                      draw_graph('{{ url_for('system.system_data',host_name=host_name,field_name='load1')}}','{{ "system_" ~ host_name | replace(".", "")}}');
+                      //test('{{ item }}');
+                   });
+
+                </script>
+
+                </div>
+                
+                
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <!--<script src="js/jquery.js"></script>-->
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+
+
+</body>
+
+</html>

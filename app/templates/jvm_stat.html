@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin - Bootstrap Admin Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/sb-admin.css') }}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/graph.css') }}" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/draw_graph_three.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+<script>
+  var socket = io('http://38.102.83.30:4000');
+  //var socket = io('http://192.168.8.19:3000');
+  socket.on('connect', function(){});
+  socket.on('news', function(data){
+  console.log(data);
+  var jsonData = data;
+
+  var parseddata =JSON.parse(jsonData);
+  if(parseddata.hasOwnProperty("process")){
+    var data = parseddata["process"];
+    var firstObject = data[0];
+    createProcessTable(firstObject);
+    showProcessList(data);
+  } else if(parseddata.hasOwnProperty("thread")){
+    var data = parseddata["thread"];
+    var firstObject = data[0];
+    createThreadTable(firstObject);
+    showThreadList(data);
+  }
+
+  var jsonId = parseddata["id"];
+  var time = parseddata["time"];
+
+  var timeString = time+" Seconds";
+
+  $( "#jsonId" ).html( jsonId );
+  $( "#time" ).html( timeString );
+
+  if(parseddata.hasOwnProperty("totalThread")){
+    $( "#totalThread" ).html( parseddata["totalThread"] );
+  }
+  if(parseddata.hasOwnProperty("runnable")){
+    $( "#runnable" ).html( parseddata["runnable"] );
+  }
+  if(parseddata.hasOwnProperty("blocked")){
+    $( "#blocked" ).html( parseddata["blocked"] );
+  }
+  if(parseddata.hasOwnProperty("waiting")){
+    $( "#waiting" ).html( parseddata["waiting"] );
+  }
+  if(parseddata.hasOwnProperty("timed-waiting")){
+    $( "#timed-waiting" ).html( parseddata["timed-waiting"] );
+  }
+
+
+function createProcessTable(firstObject){
+  var tbl = document.getElementById("processTable");
+  //tbl.style.width = "100%";
+  //tbl.style.tableLayout = "fixed";
+  if(tbl.rows.length == 0){
+  var thead = document.createElement("thead");   
+    var tr = document.createElement('tr');
+    for(var i =0; i<Object.keys(firstObject).length; i++){
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(Object.keys(firstObject)[i]));
+      tr.appendChild(td);
+      }
+    thead.appendChild(tr);
+    tbl.appendChild(thead);
+    }
+}
+
+function showProcessList(data){
+  var tbl = document.getElementById("processTable");
+  var tbody = document.getElementById("processTbody");
+  while(tbody.rows.length > 0) {
+    tbody.deleteRow(0);
+  }
+  var currentTr = null;
+
+  for(var i=0; i<data.length;i++ ){
+    var obj = data[i];
+    var tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
+    tr.addEventListener('click', (function(obj,tr) { return function(e) {
+      if(currentTr != null){
+        currentTr.style.backgroundColor = "white";
+      }
+      
+      tr.style.backgroundColor = "orange"; 
+      currentTr = tr;
+      //console.log(obj["index"]);
+
+      var ip = $("#ip").find(':selected').val();
+
+      //console.log(ip);
+
+      var url = '{{ url_for('main.jvmstat_thread_id',ip='ip',thread_id='thread_id')}}';
+      var arr = url.split("/");
+      arr[3] = ip;
+      arr[4] = obj["index"];
+      var str = "";
+      for(var i=0;i<arr.length;i++){
+          str = str+"/"+arr[i];
+      }
+
+      url1 = str.substring(0, 0) + '' + str.substring(0+1);
+
+      console.log(url1);
+
+
+      $.get(url1, function( data ) {
+
+       });
+
+       e.preventDefault();
+
+
+      }
+      })(obj,tr));
+    for(var j=0;j<Object.keys(obj).length;j++){
+      var td = document.createElement("td");
+      var key = Object.keys(obj)[j];
+      var value = obj[key];
+      td.appendChild(document.createTextNode(value));
+      tr.appendChild(td);
+      }
+
+  tbody.appendChild(tr);
+  }
+
+  tbl.appendChild(tbody);
+}
+
+function createThreadTable(firstObject){
+  var threadTable = document.getElementById("threadTable");
+  threadTable.style.width = "100%";
+  if(threadTable.rows.length == 0){
+    var thead = document.createElement("thead");   
+    var tr = document.createElement('tr');
+    for(var i =0; i<Object.keys(firstObject).length; i++){
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(Object.keys(firstObject)[i]));
+      tr.appendChild(td);
+      }
+    thead.appendChild(tr);
+    threadTable.appendChild(thead);
+  }
+}
+
+function showThreadList(listOfThreads){
+  var threadTable = document.getElementById("threadTable");
+  var tbody = document.getElementById("threadTbody");
+
+  while(tbody.rows.length > 0) {
+    tbody.deleteRow(0);
+  }
+
+  var threads = Object.keys(listOfThreads).map(function(k) { return listOfThreads[k]; }); 
+  threads.sort(function (obj1, obj2){ return obj2.cpuPercent - obj1.cpuPercent});
+    
+  for(var i=0; i<threads.length;i++ ){
+    var obj = threads[i];
+    var tr = document.createElement("tr");
+      for(var j=0;j<Object.keys(obj).length;j++){
+        var td = document.createElement("td");
+        var key = Object.keys(obj)[j];
+        var value = obj[key];
+        if(key == "cpuPercent"){
+        td.appendChild(document.createTextNode(value +"%"));
+        } else {
+          td.appendChild(document.createTextNode(value));
+        }
+        
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+   }
+   threadTable.appendChild(tbody);
+}
+
+
+
+});
+socket.on('disconnect', function(){});
+</script>
+
+</head>
+
+<body onload=""><!--,mainGraph()-->
+
+    <div > <!--  id="wrapper"  -->
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index')}}">Admin</a>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu message-dropdown">
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <div class="media">
+                                    <span class="pull-left">
+                                        <img class="media-object" src="http://placehold.it/50x50" alt="">
+                                    </span>
+                                    <div class="media-body">
+                                        <h5 class="media-heading"><strong>John Smith</strong>
+                                        </h5>
+                                        <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="message-footer">
+                            <a href="#">Read All New Messages</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu alert-dropdown">
+                        <li>
+                            <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">View All</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Admin <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.jvm_stat')}}"><i class="fa fa-fw fa-gear"></i> JVM Stat</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">
+                            JVM's <small>Statistics</small>
+                        </h3>
+                        <ol class="breadcrumb">
+                            <li class="active">
+                                <i class="fa fa-dashboard"></i> 
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+    
+
+                <div class="row">
+                    
+                </div>
+
+                <div class="row">
+                    <form class="form-inline">
+
+                        <div class="form-group">
+                            <label for="field_list" class="control-label">Server List : </label>
+                              <select class="form-control btn btn-primary" id="ip">
+                                      <!--<option value="192.168.8.19">192.168.8.19</option>-->
+                                      <option value="104.193.36.68">authcont1</option>
+                                      <option value="104.193.36.69">authcont2</option>
+                                      <option value="104.193.36.76">authproc1</option>
+                                      <option value="104.193.36.77">authproc2</option>
+                                      <option value="104.193.36.78">authproc3</option>
+                                      <option value="104.193.36.79">authproc4</option>
+                                      <option value="104.193.36.80">authproc5</option>
+                                      <option value="104.193.36.81">authproc6</option>
+                                      <option value="104.193.36.82">authproc7</option>
+                                      <option value="104.193.36.83">authproc8</option>
+                                      <option value="104.193.36.101">authproc9</option>
+                                      <option value="104.193.36.102">authproc10</option>
+                                      <option value="104.193.36.103">authproc11</option>
+                                      <option value="104.193.36.104">authproc12</option>
+                                      <option value="104.193.36.105">authproc13</option>
+                                      <option value="104.193.36.106">authproc14</option>
+                                      <option value="104.193.36.107">authproc15</option>
+                                      <option value="104.193.36.108">authproc16</option>
+                              </select>
+                        </div>
+                        
+                        <div class="form-group">
+                              <button class="form-control btn btn-primary" id="start">
+                                      Start
+                              </button>
+                        </div>
+                        <div class="form-group">
+                              <button class="form-control btn btn-danger" id="stop">
+                                      Stop
+                              </button>
+                        </div>
+                        <div class="form-group">
+                              <button class="form-control btn btn-primary" id="refresh">
+                                      Refresh
+                              </button>
+                        </div>
+                        
+                    </form>    
+                    
+                </div>
+                </div>
+                <br/><br/>
+                <div class="row">  
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> JVM's Statistics</h3>
+                                <br/>
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> JSON ID : <i id="jsonId">Loading Please Wait</i></h3>
+                                <br/>
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Calculation taken : <i id="time">Loading Please Wait</i></h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="maingraph">
+
+                                   <table id="processTable" class = "table table-bordered">
+                                     <caption>Process Table</caption>
+                                     <tbody id="processTbody"></tbody>
+                                    </table>
+
+                                    <h3 class="panel-title"><i class="fa fa-fw"></i> <i>Total Thread : </i><i id="totalThread">0</i>&nbsp&nbsp&nbsp&nbsp<i>Runnable : </i><i id="runnable">0</i>&nbsp&nbsp&nbsp&nbsp<i>Blocked : </i><i id="blocked">0</i>&nbsp&nbsp&nbsp&nbsp<i>Waiting : </i><i id="waiting">0</i>&nbsp&nbsp&nbsp&nbsp<i>Timed Waiting : </i><i id="timed-waiting">0</i></h3>
+
+                                    <table id="threadTable" class = "table table-bordered">
+
+                                      <caption>Threads of selected process</caption>
+                                      <tbody id="threadTbody"></tbody>
+                                    </table>
+
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                       <script>
+                       //console.log({{ item }});
+                       $(document).ready(function() {
+
+                        var ip = "";
+
+                        $("#ip").change(function(){
+                            var option = $(this).find(':selected');
+                            ip = option.val();
+                            
+                         });
+
+                         $("#start").click(function(e){
+
+                            $(this).removeClass("btn-primary");
+                            $("#stop").removeClass("btn-danger");
+                            $("#stop").addClass("btn-danger");
+                            $("#refresh").removeClass("btn-primary");
+                            $("#refresh").addClass("btn-primary");
+
+                            ip = $("#ip").find(':selected').val();
+
+                            var url = '{{ url_for('main.jvmstat_start',ip='ip')}}';
+                            var arr = url.split("/");
+                            arr[3] = ip;
+                            var str = "";
+                            for(var i=0;i<arr.length;i++){
+                                   str = str+"/"+arr[i];
+                            }
+
+                            url1 = str.substring(0, 0) + '' + str.substring(0+1);
+
+
+                            $.get(url1, function( data ) {
+
+                            });
+
+                            e.preventDefault();
+                            
+                         });
+
+                         $("#stop").click(function(e){
+
+                            ip = $("#ip").find(':selected').val();
+
+                            var url = '{{ url_for('main.jvmstat_stop',ip='ip')}}';
+                            var arr = url.split("/");
+                            arr[3] = ip;
+                            var str = "";
+                            for(var i=0;i<arr.length;i++){
+                                   str = str+"/"+arr[i];
+                            }
+
+                            url1 = str.substring(0, 0) + '' + str.substring(0+1);
+
+
+                            $.get(url1, function( data ) {
+
+                            });
+
+                            //e.preventDefault();
+                            
+                         });
+
+                         $("#refresh").click(function(e){
+
+                            ip = $("#ip").find(':selected').val();
+
+                            var url = '{{ url_for('main.jvmstat_refresh',ip='ip')}}';
+                            var arr = url.split("/");
+                            arr[3] = ip;
+                            var str = "";
+                            for(var i=0;i<arr.length;i++){
+                                   str = str+"/"+arr[i];
+                            }
+
+                            url1 = str.substring(0, 0) + '' + str.substring(0+1);
+
+
+                            $.get(url1, function( data ) {
+
+                            });
+
+                            e.preventDefault();
+                            
+                         });
+
+
+
+
+                       });
+                      </script>
+                    
+                    
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+                
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <!--<script src="js/jquery.js"></script>-->
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+
+
+</body>
+
+</html>
